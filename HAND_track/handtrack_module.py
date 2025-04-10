@@ -19,8 +19,8 @@ class handdetect():
         self.mpDraw = mp.solutions.drawing_utils  
 
     def findHands(self, img, draw=True):
-        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # convert BGR to RGB for mediapipe processing
-        self.results = self.hands.process(imgRGB)  # process the image to detect hands
+        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  
+        self.results = self.hands.process(imgRGB) 
         if self.results.multi_hand_landmarks:
             for handLms in self.results.multi_hand_landmarks:
                 if draw:
@@ -36,25 +36,23 @@ class handdetect():
                 cx, cy = int(lm.x * width), int(lm.y * height)  
                 lmList.append([id, cx, cy]) 
                 if draw:
-                    cv2.circle(img, (cx, cy), 5, (155, 44, 55), cv2.FILLED)  #here the colour of the hand will be some blue cause we chose 155, 44, 55 we are manually drawing the hand here 
+                    cv2.circle(img, (cx, cy), 5, (155, 44, 55), cv2.FILLED)   
         return lmList  
 
 capture = cv2.VideoCapture(0)  # 0 in the sense 0th camera ie primary camera
-# this code is used to run a webcam
-pTime = 0  # previous time for calculating FPS
-cTime = 0  # current time for calculating FPS
+pTime = 0  
+cTime = 0  
 
-detector = handdetect()  # create an instance of the hand detector
+detector = handdetect()  
 while True:
-    success, img = capture.read()  # read a frame from the webcam
-    img = detector.findHands(img)  # detect hands and draw landmarks on the frame
-    lmList = detector.findPosition(img)  # get the positions of hand landmarks
+    success, img = capture.read()  
+    img = detector.findHands(img)  
+    lmList = detector.findPosition(img) 
     if len(lmList) != 0:
         print(lmList[4])  # print coordinates of landmark 4 (tip of thumb)
-    cTime = time.time()  # get the current time
-    fps = 1 / (cTime - pTime) if (cTime - pTime) > 0 else 0  # calculate FPS
+    cTime = time.time()  
+    fps = 1 / (cTime - pTime) if (cTime - pTime) > 0 else 0  
     pTime = cTime  # update previous time
-    cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)  # display FPS on screen
-    # str(int(fps)) converts FPS value to string and int rounds it off
-    cv2.imshow("Image", img)  # changed imgRGB to img so the camera feed is displayed correctly
-    cv2.waitKey(1)  # wait for a short time before capturing the next frame
+    cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)  
+    cv2.imshow("Image", img)  
+    cv2.waitKey(1) 
